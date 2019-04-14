@@ -76,9 +76,10 @@ class Linha{
     }
 
     drawPreview(x, y) {
-        
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
 
-        context.strokeStyle = "blue";
+        context.strokeStyle = "green";
 
         context.beginPath();
         context.moveTo(this.ponto1.x, this.ponto1.y);
