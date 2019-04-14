@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Illustrator Lite</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+
+	<body>
+	  <div class="barraTitulo">
+	    <h1>Illustrator Lite</h1>
+	  </div>
+
+		<div>
+			<table class = "menu">
+				<tr>
+					<td><button id="btnPonto">Ponto</button></td>
+					<td><button id="btnLinha">Linha</button></td>
+					<td><button id="btnCurva">Curva</button></td>
+					<td><button id="btnCirculo">Circulo</button></td>
+					<td><button id="btnPoligono">Polígono</button></td>
+					<td><button id="btnSelecao">Selecionar</button></td>
+					<td><button id="btnLimpar">Limpar</button></td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="canvas_bloco">
+			<canvas id="canvas" height="800" width="1000">
+			</canvas>
+		</div>
+
+
+    <script src="evento.js"></script>
+		<script src="ponto.js"></script>
+		<script src="linha.js"></script>
+		<script src="curva.js"></script>
+		<script src="circulo.js"></script>
+		<script src="poligono.js"></script>
+
+		
+	</body>
+</html>

@@ -1,0 +1,50 @@
+button{
+    background-color: #565656;
+    display: block;
+    color: aliceblue;
+    width: 100%;
+}
+
+.barraTitulo{
+    text-align: center;
+    margin: 0;
+    border: 5px;
+    border-color: antiquewhite;
+    height: 10%;
+    padding: auto;
+    color: orangered;
+}
+body{
+    background-color: #565656;
+}
+
+h1{
+    margin: auto;
+}
+td{
+    padding: 0;
+    display: block;
+}
+.canvas_bloco{
+	width: 1000px;
+	height: 800px;
+	border: 10px solid #333;
+    margin: 0 auto; 
+    float: both;
+    
+}
+canvas{
+    width: 1000px;
+}
+#canvas{
+    
+    background-color: whitesmoke;
+    position: relative;
+}
+
+.menu{
+    width: 8%; 
+    height: 100%; 
+    float: left;
+}
+
