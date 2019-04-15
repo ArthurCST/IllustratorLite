@@ -4,6 +4,8 @@ var context = canvas.getContext('2d');
 var shapes = [];
 var shape = 0;
 
+var ang = 0;
+
 function reset(){
     for (let i = 0; i < shapes.length; i++) {
         shapes[i].resetColor();
@@ -24,14 +26,37 @@ function restoreDraw(){
     reDraw();
 }
 
+function EquacaoDaReta(x, x1, y1, x2, y2) {
+    return (((x - x1) * (y2 - y1)) / (x2 - x1)) + y1;
+}
+
+function Norma(reta) {
+    var deltaX = Math.abs(reta.ponto2.x - reta.ponto1.x);
+    var deltaY = Math.abs(reta.ponto2.y - reta.ponto1.y);
+    return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+}
+
+function ProdutoInterno(reta1, reta2) {
+    var deltaX1 = reta1.ponto2.x - reta1.ponto1.x;
+    var deltaX2 = reta2.ponto2.x - reta2.ponto1.x;
+    var deltaY1 = reta1.ponto2.y - reta1.ponto1.y;
+    var deltaY2 = reta2.ponto2.y - reta2.ponto1.y;
+    return (deltaX1 * deltaX2) + (deltaY1 * deltaY2);
+}
 
 var previousX = 0;
 var previousY = 0;
 var shapeSelected = null;
+var shapeSelected2 = null;
+var origem = 0;
+var origem2 = 0;
+var fim = 0;
+var fim2 = 0;
+
 
 var btnCurrentAction = "none";
 var numberOfClicks = 0;
-
+var arccos;
 var cx;
 var cy;
 var mousePressed = false;
@@ -78,6 +103,50 @@ function onDown(event){
 
                 numberOfClicks = 0;
             }
+            break;
+        case "Angulo":
+            for (let i = 0; i < shapes.length; i++) {
+                if(numberOfClicks == 0){
+                    if(shapes[i] instanceof  Linha){
+                        if(shapes[i].Selecao(cx, cy, 10)){
+                            if(shapeSelected != null)
+                                shapeSelected.restore();
+                            shapeSelected = shapes[i];
+                            shapeSelected.selected();
+                            previousX = cx;
+                            previousY = cy;
+                            origem = shapeSelected.ponto1;
+                            fim = shapeSelected.ponto2;
+                        }
+                    }
+                    reDraw();
+                    numberOfClicks++;
+                }else{
+                    if(shapes[i] instanceof  Linha){
+                        if(shapes[i].Selecao(cx, cy, 10)){
+                            if(shapeSelected2 != null)
+                                shapeSelected2.restore();
+                            shapeSelected2 = shapes[i];
+                            shapeSelected2.selected();
+                            previousX = cx;
+                            previousY = cy;
+                            origem2 = shapeSelected2.ponto1;
+                            fim2 = shapeSelected2.ponto2;
+                        }
+                    }
+                    numberOfClicks = 0;
+                    
+                    reDraw();
+                    break;
+                }
+            }
+            var norma1 = Norma(shapeSelected);
+            var norma2 = Norma(shapeSelected2);
+            var produtoInterno = ProdutoInterno(shapeSelected, shapeSelected2);
+            arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+
+            alert("Angulo entre as retas: "+arccos*180/Math.PI);
+
             break;
         case "Circulo":
             if(numberOfClicks == 0){
@@ -199,6 +268,14 @@ document.getElementById('btnPonto').addEventListener('click', function(){
 /*Adicionando evento ao botão btnLinha */
 document.getElementById('btnLinha').addEventListener('click', function(){
     btnCurrentAction = "Linha";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+/*Adicionando evento ao botão btnAngulo */
+document.getElementById('btnAngulo').addEventListener('click', function(){
+    btnCurrentAction = "Angulo";
 
     if(shapes.length > 0){
         restoreDraw();
