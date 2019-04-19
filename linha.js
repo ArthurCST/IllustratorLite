@@ -88,19 +88,42 @@ class Linha{
         
     }
 
-    translation(cx, cy){
+    drawPreviewTranslation(cx, cy){
+
         var x = cx - this.ponto1.x;
         var y = cy - this.ponto1.y;
-        var newPositon1;
-        var newPositon2;
-        var currentPosition1 = [[this.ponto1.x],[this.ponto1.y],[1]];
-        var currentPosition2 = [[this.ponto2.x],[this.ponto2.y],[1]];
-        var translationMatrix = [[x, 0, 0],[0, y, 0],[0, 0, 1]];
 
-        newPositon1 = multiplyMatrix(translationMatrix, currentPosition1);
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+
         newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
-        this.ponto1.x = newPositon1[0][0];
-        this.ponto1.y = newPositon1[1][0];
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.beginPath();
+        context.strokeStyle = "green";
+        context.moveTo(cx, cy);
+        context.lineTo(newPositon2[0][0], newPositon2[1][0]);
+        context.stroke();
+
+        reDraw();
+    }
+
+
+    translation(cx, cy){
+
+        var x = cx - this.ponto1.x;
+        var y = cy - this.ponto1.y;
+
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+
+        
+        newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
+
+        this.ponto1.x = cx;
+        this.ponto1.y = cy;
 
         this.ponto2.x = newPositon2[0][0];
         this.ponto2.y = newPositon2[1][0];
@@ -111,27 +134,23 @@ class Linha{
 
 function multiplyMatrix(matrixA, matrixB)
 {
-    var result = new Array();//declare an array   
+    var result = [[0],[0],[0]];//declare an array   
 
     //var numColsRows=$("#matrixRC").val();
-    numColsRows=3;
+    numColsRows=matrixA.length;
     
     //iterating through first matrix rows
     for (var i = 0; i < numColsRows; i++) 
-    {
+    { 
         //iterating through second matrix columns
-        for (var j = 0; j < numColsRows; j++) 
+        for (var j = 0; j < matrixB[0].length; j++) 
         { 
-            var rrr = new Array();
-            var resu = new Array();
             //calculating sum of pairwise products
             for (var k = 0; k < numColsRows; k++) 
             {
-                rrr.push(parseInt(matrixA[i][k])*parseInt(matrixB[k][j]));
+                result [i][j] += matrixA[i][k]*matrixB[k][j];
             }//for 3
-            resu.push(parseInt(rrr[i])+parseInt(rrr[i+1]));
-
-            result.push(resu);
+            
             //result.push(matrixRow);
         }//for 2
     }//for 1

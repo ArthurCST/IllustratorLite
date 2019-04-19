@@ -49,6 +49,16 @@ class Ponto{
         
     }
 
+    drawPreviewTranslation(x, y){
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        context.beginPath();
+        context.fillStyle = "green";
+        context.fillRect(x, y, 3, 3);
+
+        reDraw();
+    }
+
    
 
 }

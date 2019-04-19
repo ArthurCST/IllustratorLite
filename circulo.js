@@ -54,4 +54,58 @@ class Circulo{
         context.stroke();
     }
 
+    translation(cx, cy){
+
+        var x = cx - this.ponto1.x;
+        var y = cy - this.ponto1.y;
+
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+       
+        newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
+
+        var dx = cx - newPositon2[0][0];
+        var dy = cy - newPositon2[1][0];
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+
+        this.ponto1.x = cx;
+        this.ponto1.y = cy;
+
+        this.ponto2.x = newPositon2[0][0];
+        this.ponto2.y = newPositon2[1][0];
+
+        this.r = dist;
+
+    }
+
+    drawPreviewTranslation(cx, cy){
+
+        var x = cx - this.ponto1.x;
+        var y = cy - this.ponto1.y;
+
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+       
+        newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
+
+        var dx = cx - newPositon2[0][0];
+        var dy = cy - newPositon2[1][0];
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+
+        context.strokeStyle = "green";
+
+        context.beginPath();
+        
+        context.arc(cx, cy, dist, 0, Math.PI*2);
+        context.stroke();
+
+        reDraw();
+    }
+
 }

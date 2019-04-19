@@ -69,10 +69,12 @@ function onmousemove(event) {
     mouse_x = event.x - rect.x;
     mouse_y = event.y - rect.y;
 
-    
-
     if (numberOfClicks > 0) {
-        shape.drawPreview(mouse_x, mouse_y);
+        if(btnCurrentAction == "Translacao"){
+            shapeSelected.drawPreviewTranslation(mouse_x, mouse_y);
+        }else{
+            shape.drawPreview(mouse_x, mouse_y);
+        }
     }
     reDraw();
 }
@@ -81,7 +83,6 @@ function onDown(event){
 
     cx = event.clientX - context.canvas.offsetLeft;
     cy = event.clientY - context.canvas.offsetTop;
-    mouseRight = event.button;
     mousePressed = true;
     switch (btnCurrentAction) {
         case "Ponto":
@@ -255,6 +256,7 @@ function onDown(event){
                 numberOfClicks = 0;
                 shapeSelected.translation(cx,cy);
                 shapeSelected.restore();
+                context.clearRect(0, 0, canvas.width, canvas.height);
                 reDraw();
                 //shapeSelected.draw();
                 break;
@@ -264,10 +266,11 @@ function onDown(event){
                     /*Ponto*/
                     if(shapes[i] instanceof Ponto){
                         if(shapes[i].Selecao(cx, cy, 5)){
-
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
                             shapeSelected = shapes[i];
                             if(numberOfClicks == 0){
-                                shapeSelected.color = "whitesmoke";
                                 numberOfClicks++;  
                             }
                         }
@@ -283,7 +286,6 @@ function onDown(event){
                             }
                             shapeSelected = shapes[i];
                             if(numberOfClicks == 0){
-                                shapeSelected.color = "whitesmoke";
                                 numberOfClicks++; 
                                  
                             }
@@ -294,10 +296,13 @@ function onDown(event){
                     /*Circulo*/
                     if(shapes[i] instanceof Circulo){
                         if(shapes[i].Selecao(cx, cy, 30)){
-                            if(shapeSelected != null)
+                            if(shapeSelected != null){
                                 shapeSelected.restore();
+                            }
                             shapeSelected = shapes[i];
-                            shapeSelected.selected();
+                            if(numberOfClicks == 0){
+                                numberOfClicks++;          
+                            }
                             previousX = cx;
                             previousY = cy;
                         }
@@ -310,8 +315,9 @@ function onDown(event){
                                 shapeSelected.restore();
                             }
                             shapeSelected = shapes[i];
-                            alert("Area do poligono: "+shapeSelected.area());
-                            shapeSelected.selected();
+                            if(numberOfClicks == 0){
+                                numberOfClicks++;          
+                            }
                             previousX = cx;
                             previousY = cy;           
                         }

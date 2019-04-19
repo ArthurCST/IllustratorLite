@@ -157,5 +157,50 @@ class Poligono {
         return(ni%2);
     }
 
+    translation(cx, cy){
+
+        var x = cx - this.coord[0].x;
+        var y = cy - this.coord[0].y;
+        
+        this.coord[0].x = cx;
+        this.coord[0].y = cy;
+
+        var newPositon;
+        for (let i = 1; i < this.coord.length; i++) {
+            var currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+            newPositon = multiplyMatrix(translationMatrix, currentPosition);
+            this.coord[i].x = newPositon[0][0];
+            this.coord[i].y = newPositon[1][0];
+        }
+    }
+
+    drawPreviewTranslation(cx, cy){
+
+        var x = cx - this.coord[0].x;
+        var y = cy - this.coord[0].y;
+        
+
+
+        context.beginPath();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+        context.strokeStyle = "green";
+        context.moveTo(cx, cy);
+
+        var newPositon;
+        for (let i = 1; i < this.coord.length; i++) {
+            var currentPosition = [[Math.abs(this.coord[i].x)], [Math.abs(this.coord[i].y)], [1]];
+            var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
+            newPositon = multiplyMatrix(translationMatrix, currentPosition);
+            context.lineTo(newPositon[0][0], newPositon[1][0]);
+        }
+        context.lineTo(cx, cy);
+        context.stroke();
+        
+        
+        context.closePath();
+    }
+
 
 }
