@@ -69,11 +69,12 @@ function onmousemove(event) {
     mouse_x = event.x - rect.x;
     mouse_y = event.y - rect.y;
 
-    reDraw();
+    
 
     if (numberOfClicks > 0) {
         shape.drawPreview(mouse_x, mouse_y);
     }
+    reDraw();
 }
 
 function onDown(event){
@@ -247,6 +248,80 @@ function onDown(event){
             }
             reDraw();
             break;
+
+        case "Translacao":
+            
+            if(numberOfClicks > 0){
+                numberOfClicks = 0;
+                shapeSelected.translation(cx,cy);
+                shapeSelected.restore();
+                reDraw();
+                //shapeSelected.draw();
+                break;
+                
+            }else{
+                for (let i = 0; i < shapes.length; i++) {
+                    /*Ponto*/
+                    if(shapes[i] instanceof Ponto){
+                        if(shapes[i].Selecao(cx, cy, 5)){
+
+                            shapeSelected = shapes[i];
+                            if(numberOfClicks == 0){
+                                shapeSelected.color = "whitesmoke";
+                                numberOfClicks++;  
+                            }
+                        }
+                        
+                        previousX = cx;
+                        previousY = cy;
+                    }
+                    /*Linha*/
+                    if(shapes[i] instanceof  Linha){
+                        if(shapes[i].Selecao(cx, cy, 10)){
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
+                            shapeSelected = shapes[i];
+                            if(numberOfClicks == 0){
+                                shapeSelected.color = "whitesmoke";
+                                numberOfClicks++; 
+                                 
+                            }
+                            previousX = cx;
+                            previousY = cy;
+                        }
+                    }
+                    /*Circulo*/
+                    if(shapes[i] instanceof Circulo){
+                        if(shapes[i].Selecao(cx, cy, 30)){
+                            if(shapeSelected != null)
+                                shapeSelected.restore();
+                            shapeSelected = shapes[i];
+                            shapeSelected.selected();
+                            previousX = cx;
+                            previousY = cy;
+                        }
+                    }
+
+                    /*Poligono*/
+                    if(shapes[i] instanceof  Poligono){
+                        if(shapes[i].Selecao(cx, cy)){
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
+                            shapeSelected = shapes[i];
+                            alert("Area do poligono: "+shapeSelected.area());
+                            shapeSelected.selected();
+                            previousX = cx;
+                            previousY = cy;           
+                        }
+                        
+                    }
+
+                }
+            }    
+            reDraw();
+            break;
     }
 }
 
@@ -299,6 +374,14 @@ document.getElementById('btnPoligono').addEventListener('click', function(){
 /*Adicionando evento ao botão btnSelecao */
 document.getElementById('btnSelecao').addEventListener('click', function(){
     btnCurrentAction = "Selecao";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
+document.getElementById('btnTranslacao').addEventListener('click', function(){
+    btnCurrentAction = "Translacao";
 
     if(shapes.length > 0){
         restoreDraw();
