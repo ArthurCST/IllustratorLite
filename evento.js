@@ -72,6 +72,8 @@ function onmousemove(event) {
     if (numberOfClicks > 0) {
         if(btnCurrentAction == "Translacao"){
             shapeSelected.drawPreviewTranslation(mouse_x, mouse_y);
+        }else if(btnCurrentAction == "Escala"){
+            shapeSelected.drawPreviewScale(mouse_x, mouse_y);
         }else{
             shape.drawPreview(mouse_x, mouse_y);
         }
@@ -258,7 +260,6 @@ function onDown(event){
                 shapeSelected.restore();
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 reDraw();
-                //shapeSelected.draw();
                 break;
                 
             }else{
@@ -278,6 +279,70 @@ function onDown(event){
                         previousX = cx;
                         previousY = cy;
                     }
+                    /*Linha*/
+                    if(shapes[i] instanceof  Linha){
+                        if(shapes[i].Selecao(cx, cy, 10)){
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
+                            shapeSelected = shapes[i];
+                            if(numberOfClicks == 0){
+                                numberOfClicks++; 
+                                 
+                            }
+                            previousX = cx;
+                            previousY = cy;
+                        }
+                    }
+                    /*Circulo*/
+                    if(shapes[i] instanceof Circulo){
+                        if(shapes[i].Selecao(cx, cy, 30)){
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
+                            shapeSelected = shapes[i];
+                            if(numberOfClicks == 0){
+                                numberOfClicks++;          
+                            }
+                            previousX = cx;
+                            previousY = cy;
+                        }
+                    }
+
+                    /*Poligono*/
+                    if(shapes[i] instanceof  Poligono){
+                        if(shapes[i].Selecao(cx, cy)){
+                            if(shapeSelected != null){
+                                shapeSelected.restore();
+                            }
+                            shapeSelected = shapes[i];
+                            if(numberOfClicks == 0){
+                                numberOfClicks++;          
+                            }
+                            previousX = cx;
+                            previousY = cy;           
+                        }
+                        
+                    }
+
+                }
+            }    
+            reDraw();
+            break;
+        
+        case "Escala":
+            
+            if(numberOfClicks > 0){
+                numberOfClicks = 0;
+                shapeSelected.scale(cx,cy);
+                shapeSelected.restore();
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                reDraw();
+
+                break;
+                
+            }else{
+                for (let i = 0; i < shapes.length; i++) {
                     /*Linha*/
                     if(shapes[i] instanceof  Linha){
                         if(shapes[i].Selecao(cx, cy, 10)){
@@ -388,6 +453,14 @@ document.getElementById('btnSelecao').addEventListener('click', function(){
 
 document.getElementById('btnTranslacao').addEventListener('click', function(){
     btnCurrentAction = "Translacao";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
+document.getElementById('btnEscala').addEventListener('click', function(){
+    btnCurrentAction = "Escala";
 
     if(shapes.length > 0){
         restoreDraw();

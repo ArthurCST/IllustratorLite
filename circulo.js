@@ -46,11 +46,10 @@ class Circulo{
         var dx = this.ponto1.x - x;
         var dy = this.ponto1.y - y;
         var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-        this.r = dist;
 
         context.beginPath();
         
-        context.arc(this.ponto1.x, this.ponto1.y, this.r, 0, Math.PI*2);
+        context.arc(this.ponto1.x, this.ponto1.y, dist, 0, Math.PI*2);
         context.stroke();
     }
 
@@ -106,6 +105,32 @@ class Circulo{
         context.stroke();
 
         reDraw();
+    }
+
+    scale(cx, cy){
+        var dx = this.ponto1.x - cx;
+        var dy = this.ponto1.y - cy;
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        this.r = dist;
+        this.ponto2.x = cx;
+        this.ponto2.y = cy;
+
+    }
+
+    drawPreviewScale(cx, cy){
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+
+        context.strokeStyle = "green";
+        var dx = this.ponto1.x - cx;
+        var dy = this.ponto1.y - cy;
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+
+        context.beginPath();
+        
+        context.arc(this.ponto1.x, this.ponto1.y, dist, 0, Math.PI*2);
+        context.stroke();
     }
 
 }

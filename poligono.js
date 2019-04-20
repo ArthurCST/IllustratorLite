@@ -179,8 +179,6 @@ class Poligono {
 
         var x = cx - this.coord[0].x;
         var y = cy - this.coord[0].y;
-        
-
 
         context.beginPath();
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -202,5 +200,87 @@ class Poligono {
         context.closePath();
     }
 
+    scale(cx, cy){
+        var x = Math.abs(cx - this.coord[0].x);
+        var y = Math.abs(cy - this.coord[0].y);
+        var center = this.getCenter();
+        var newPositon;
 
+        var currentPosition;
+        var scaleMatrix = [[x/100, 0, 0],[0, y/100, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+
+        for (let i = 0; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            this.coord[i].x = newPositon[0][0];
+            this.coord[i].y = newPositon[1][0];
+        }
+
+    }
+
+    drawPreviewScale(cx, cy){
+
+        var x = Math.abs(cx - this.coord[0].x);
+        var y = Math.abs(cy - this.coord[0].y);
+        var center = this.getCenter();
+        var newPositon;
+
+        var currentPosition = [[this.coord[0].x], [this.coord[0].y], [1]];
+        var scaleMatrix = [[x/100, 0, 0],[0, y/100, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+        var b1 = newPositon[0][0];
+        var b2 = newPositon[1][0];
+        context.beginPath();
+        context.strokeStyle = "green";
+        context.moveTo(b1, b2);
+        
+        for (let i = 1; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            context.lineTo(newPositon[0][0], newPositon[1][0]);
+        }
+        context.lineTo(b1, b2);
+        context.stroke();
+    }
+
+
+
+
+    getCenter(){
+        var x;
+        var y;
+
+        var x_min = this.coord[0].x;
+        var y_min = this.coord[0].y;
+
+        var x_max = this.coord[0].x;
+        var y_max = this.coord[0].y;
+
+        for(let i=1; i<this.coord.length; i++){
+            if(this.coord[i].x < x_min){
+                x_min = this.coord[i].x;
+            }
+            if(this.coord[i].y < y_min){
+                y_min = this.coord[i].y;
+            }
+            if(this.coord[i].x > x_max){
+                x_max = this.coord[i].x;
+            }
+            if(this.coord[i].y > y_max){
+                y_max = this.coord[i].y;
+            }
+        }
+
+        x = x_min + ((x_max-x_min)/2);
+        y = y_min + ((y_max-y_min)/2);
+        var center = new Ponto(x,y);
+        return center;
+    }
 }

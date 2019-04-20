@@ -130,6 +130,28 @@ class Linha{
 
     }
 
+    scale(cx, cy){
+        var x = cx - this.ponto1.x;
+        var y = cy - this.ponto1.y;
+        this.ponto2.x += x;
+        this.ponto2.y += y;
+
+    }
+
+    drawPreviewScale(cx, cy){
+        var x = cx - this.ponto1.x;
+        var y = cy - this.ponto1.y;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+
+        context.strokeStyle = "green";
+
+        context.beginPath();
+        context.moveTo(this.ponto1.x, this.ponto1.y);
+        context.lineTo(this.ponto2.x+x, this.ponto2.y+y);
+        context.stroke();
+    }
+
 }
 
 function multiplyMatrix(matrixA, matrixB)
