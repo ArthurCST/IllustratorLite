@@ -3,10 +3,14 @@ class Linha{
         this.ponto1 = new Ponto(cx,cy);
         this.ponto2;
         this.color = "black";
+        this.eixo;
     }
 
     addSegundoPonto(cx, cy){
         this.ponto2 = new Ponto(cx,cy);
+    }
+    addEixo(cx, cy){
+        this.eixo = new Ponto(cx, cy);
     }
 
     codSelecao(x, y, xmin, xmax, ymin, ymax){
@@ -73,6 +77,22 @@ class Linha{
         context.lineTo(this.ponto2.x, this.ponto2.y);
         context.stroke();
         context.closePath();
+    }
+
+    getCenter(){
+        var x;
+        var y;
+
+        var x_min = this.ponto1.x;
+        var y_min = this.ponto1.y;
+
+        var x_max = this.ponto2.x;
+        var y_max = this.ponto2.y;
+
+        x = x_min + ((x_max-x_min)/2);
+        y = y_min + ((y_max-y_min)/2);
+        var center = new Ponto(x,y);
+        return center;
     }
 
     drawPreview(x, y) {
@@ -149,6 +169,82 @@ class Linha{
         context.beginPath();
         context.moveTo(this.ponto1.x, this.ponto1.y);
         context.lineTo(this.ponto2.x+x, this.ponto2.y+y);
+        context.stroke();
+    }
+
+    rotation(cx, cy){
+        var center = this.eixo;
+
+        var vetorEixo = new Linha(center.x, center.y);
+        vetorEixo.addSegundoPonto(cx, cy);
+        
+        var vetorBase = new Linha(0, canvas.height);
+        vetorBase.addSegundoPonto(canvas.width, canvas.height);
+
+        var norma1 = Norma(vetorEixo);
+        var norma2 = Norma(vetorBase);
+        var produtoInterno = ProdutoInterno(vetorEixo, vetorBase);
+        arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var teta = arccos*180/Math.PI;
+        
+        var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+        
+        var newPositon;
+        var currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
+        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        newPositon2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
+
+        this.ponto1.x = newPositon[0][0];;
+        this.ponto1.y = newPositon[1][0];;
+
+        this.ponto2.x = newPositon2[0][0];
+        this.ponto2.y = newPositon2[1][0];
+        
+    }
+
+    drawPreviewRotation(cx, cy){
+        this.eixo.color = "blue";
+        
+        var center = this.eixo;
+
+        var vetorEixo = new Linha(center.x, center.y);
+        vetorEixo.addSegundoPonto(cx, cy);
+        
+        var vetorBase = new Linha(0, canvas.height);
+        vetorBase.addSegundoPonto(canvas.width, canvas.height);
+
+        var norma1 = Norma(vetorEixo);
+        var norma2 = Norma(vetorBase);
+        var produtoInterno = ProdutoInterno(vetorEixo, vetorBase);
+        arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var teta = arccos*180/Math.PI;
+        
+        var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+        
+        var newPositon;
+        var currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
+        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+
+        var newPositon2;
+        var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        newPositon2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+
+        context.strokeStyle = "green";
+        this.eixo.draw();
+
+        context.beginPath();
+        context.moveTo(newPositon[0][0], newPositon[1][0]);
+        context.lineTo(newPositon2[0][0], newPositon2[1][0]);
         context.stroke();
     }
 

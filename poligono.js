@@ -4,6 +4,7 @@ class Poligono {
         this.coord = [];
         this.start = false;
         this.color = "black";
+        this.eixo;
         this.context;
         
     }
@@ -14,6 +15,9 @@ class Poligono {
 
     addPonto(x,y){
         this.coord.push(new Ponto(x,y));
+    }
+    addEixo(cx, cy){
+        this.eixo = new Ponto(cx, cy);
     }
 
     drawning(){
@@ -250,9 +254,6 @@ class Poligono {
         context.stroke();
     }
 
-
-
-
     getCenter(){
         var x;
         var y;
@@ -282,5 +283,83 @@ class Poligono {
         y = y_min + ((y_max-y_min)/2);
         var center = new Ponto(x,y);
         return center;
+    }
+
+    rotation(cx, cy){
+        var center = this.eixo;
+
+        var vetorEixo = new Linha(center.x, center.y);
+        vetorEixo.addSegundoPonto(cx, cy);
+        
+        var vetorBase = new Linha(0, canvas.height);
+        vetorBase.addSegundoPonto(canvas.width, canvas.height);
+
+        var norma1 = Norma(vetorEixo);
+        var norma2 = Norma(vetorBase);
+        var produtoInterno = ProdutoInterno(vetorEixo, vetorBase);
+        arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var teta = arccos*180/Math.PI;
+        
+        var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+        
+        var newPositon;
+        var currentPosition;
+        
+        for (let i = 0; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            this.coord[i].x = newPositon[0][0];
+            this.coord[i].y = newPositon[1][0];
+        }
+        
+    }
+
+    drawPreviewRotation(cx, cy){
+        this.eixo.color = "blue";
+        
+        var center = this.eixo;
+
+        var vetorEixo = new Linha(center.x, center.y);
+        vetorEixo.addSegundoPonto(cx, cy);
+        
+        var vetorBase = new Linha(0, canvas.height);
+        vetorBase.addSegundoPonto(canvas.width, canvas.height);
+
+        var norma1 = Norma(vetorEixo);
+        var norma2 = Norma(vetorBase);
+        var produtoInterno = ProdutoInterno(vetorEixo, vetorBase);
+        arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var teta = arccos*180/Math.PI;
+
+        var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
+        var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
+        
+        var newPositon;
+        var currentPosition = [[this.coord[0].x], [this.coord[0].y], [1]];
+        
+        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+        var b1 = newPositon[0][0];
+        var b2 = newPositon[1][0];
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+
+        this.eixo.draw();
+
+        context.beginPath();
+        context.strokeStyle = "green";
+        context.moveTo(b1, b2);
+        
+        for (let i = 1; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            context.lineTo(newPositon[0][0], newPositon[1][0]);
+        }
+        context.lineTo(b1, b2);
+        context.stroke();
+
     }
 }

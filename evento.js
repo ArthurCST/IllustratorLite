@@ -3,6 +3,7 @@ var context = canvas.getContext('2d');
 
 var shapes = [];
 var shape = 0;
+var eixo = [];
 
 var ang = 0;
 
@@ -74,6 +75,10 @@ function onmousemove(event) {
             shapeSelected.drawPreviewTranslation(mouse_x, mouse_y);
         }else if(btnCurrentAction == "Escala"){
             shapeSelected.drawPreviewScale(mouse_x, mouse_y);
+        }else if(btnCurrentAction == "Rotacao"){
+            if(numberOfClicks > 1){
+                shapeSelected.drawPreviewRotation(mouse_x, mouse_y);
+            }
         }else{
             shape.drawPreview(mouse_x, mouse_y);
         }
@@ -148,8 +153,8 @@ function onDown(event){
             var norma2 = Norma(shapeSelected2);
             var produtoInterno = ProdutoInterno(shapeSelected, shapeSelected2);
             arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
-
-            alert("Angulo entre as retas: "+arccos*180/Math.PI);
+            var angulo = arccos*180/Math.PI; 
+            alert("Angulo entre as retas: "+angulo);
 
             break;
         case "Circulo":
@@ -393,6 +398,78 @@ function onDown(event){
             }    
             reDraw();
             break;
+        
+        case "Rotacao":
+            
+            if(numberOfClicks > 1){
+                numberOfClicks = 0;
+                shapeSelected.rotation(cx,cy);
+                shapeSelected.restore();
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                reDraw();
+
+                break;
+                
+            }else{
+                if(numberOfClicks==1){
+                    shapeSelected.addEixo(cx, cy);
+                    numberOfClicks++;
+                }else{
+                    for (let i = 0; i < shapes.length; i++) {
+                        /*Linha*/
+                        if(shapes[i] instanceof  Linha){
+                            if(shapes[i].Selecao(cx, cy, 10)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++; 
+                                    
+                                }
+                                previousX = cx;
+                                previousY = cy;
+                            }
+                        }
+                        /*Circulo*/
+                        if(shapes[i] instanceof Circulo){
+                            if(shapes[i].Selecao(cx, cy, 50)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++;          
+                                }
+                                previousX = cx;
+                                previousY = cy;
+                            }
+                        }
+
+                        /*Poligono*/
+                        if(shapes[i] instanceof  Poligono){
+                            if(shapes[i].Selecao(cx, cy)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++;          
+                                }
+                                previousX = cx;
+                                previousY = cy;           
+                            }
+                            
+                        }
+
+                    }
+                }
+            }    
+            reDraw();
+            break;
     }
 }
 
@@ -466,6 +543,15 @@ document.getElementById('btnEscala').addEventListener('click', function(){
         restoreDraw();
     }
 })
+
+document.getElementById('btnRotacao').addEventListener('click', function(){
+    btnCurrentAction = "Rotacao";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
 
 document.getElementById('btnCurva').addEventListener('click', function(){
     btnCurrentAction = "Curva";
