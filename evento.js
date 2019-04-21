@@ -470,6 +470,95 @@ function onDown(event){
             }    
             reDraw();
             break;
+
+        case "Espelhamento":
+            
+            if(numberOfClicks > 1){
+                numberOfClicks = 0;
+                shapeSelected.mirror(cx,cy);
+                shapeSelected.restore();
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                reDraw();
+
+                break;
+                
+            }else{
+                if(numberOfClicks==1){
+                    shapeSelected.addEixo(cx, cy);
+                    numberOfClicks++;
+                }else{
+                    for (let i = 0; i < shapes.length; i++) {
+                        /*Ponto*/
+                        if(shapes[i] instanceof Ponto){
+                            if(shapes[i].Selecao(cx, cy, 5)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++;  
+                                }
+                            }
+                            
+                            previousX = cx;
+                            previousY = cy;
+                        }
+
+                        /*Linha*/
+                        if(shapes[i] instanceof  Linha){
+                            if(shapes[i].Selecao(cx, cy, 10)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++; 
+                                    
+                                }
+                                previousX = cx;
+                                previousY = cy;
+                            }
+                        }
+                        /*Circulo*/
+                        if(shapes[i] instanceof Circulo){
+                            if(shapes[i].Selecao(cx, cy, 50)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++;          
+                                }
+                                previousX = cx;
+                                previousY = cy;
+                            }
+                        }
+
+                        /*Poligono*/
+                        if(shapes[i] instanceof  Poligono){
+                            if(shapes[i].Selecao(cx, cy)){
+                                if(shapeSelected != null){
+                                    shapeSelected.restore();
+                                }
+                                shapeSelected = shapes[i];
+                                shapeSelected.selected();
+                                if(numberOfClicks == 0){
+                                    numberOfClicks++;          
+                                }
+                                previousX = cx;
+                                previousY = cy;           
+                            }
+                            
+                        }
+
+                    }
+                }
+            }    
+            reDraw();
+            break;
     }
 }
 
@@ -546,6 +635,14 @@ document.getElementById('btnEscala').addEventListener('click', function(){
 
 document.getElementById('btnRotacao').addEventListener('click', function(){
     btnCurrentAction = "Rotacao";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
+document.getElementById('btnEspelhamento').addEventListener('click', function(){
+    btnCurrentAction = "Espelhamento";
 
     if(shapes.length > 0){
         restoreDraw();
