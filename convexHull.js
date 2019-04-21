@@ -1,3 +1,50 @@
+class convexHull{
+
+	constructor(){
+		this.pointsCloud = [];
+        this.color = "blue";
+        this.context;
+	}
+
+	getPoints(shapes){
+		for (const i in shapes) {
+			if (shapes[i].constructor.name == "Ponto") {
+				this.pointsCloud.push(shapes[i]);
+			}else if (shapes[i].constructor.name == "Linha") {
+				this.pointsCloud.push(shapes[i].ponto1);
+				this.pointsCloud.push(shapes[i].ponto2);		
+			}else if(shapes[i].constructor.name == "Curva"){
+				for (const key in shapes[i]) {
+					this.pointsCloud.push(shapes[i].pontos[key]);
+				}
+			}else if(shapes[i].constructor.name == "Circulo"){
+				// x(t) = r cos(t) + j
+				// y(t) = r sin(t) + k
+				var ponto;
+				var x;
+				var y;
+				for (let j = 0; j < 360; j++) {
+					x = shapes[i].r * Math.cos(j)+ shapes[i].ponto1.x;
+					y = shapes[i].r * Math.sin(j)+ shapes[i].ponto1.y;
+					ponto = new Ponto(x, y);
+					this.pointsCloud.push(ponto);
+				}
+			}else if(shapes[i].constructor.name == "Poligono"){
+				for (const key in shapes[i]) {
+					this.pointsCloud.push(shapes[i].coord[key]);
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
 /*
 * CORE CONVEX HULL FUNCTIONS
 */
