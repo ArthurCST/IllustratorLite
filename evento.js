@@ -53,6 +53,7 @@ var origem = 0;
 var origem2 = 0;
 var fim = 0;
 var fim2 = 0;
+var convex = null;
 
 
 var btnCurrentAction = "none";
@@ -559,6 +560,14 @@ function onDown(event){
             }    
             reDraw();
             break;
+
+        case "ConvexHull" :
+            console.log("chegou");
+            convex = new convexHull();
+            convex.getPoints(shapes);
+            convex.draw();
+            reDraw();
+            break;
     }
 }
 
@@ -643,6 +652,14 @@ document.getElementById('btnRotacao').addEventListener('click', function(){
 
 document.getElementById('btnEspelhamento').addEventListener('click', function(){
     btnCurrentAction = "Espelhamento";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
+document.getElementById('btnConvexHull').addEventListener('click', function(){
+    btnCurrentAction = "ConvexHull";
 
     if(shapes.length > 0){
         restoreDraw();

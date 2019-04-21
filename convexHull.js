@@ -3,7 +3,12 @@ class convexHull{
 	constructor(){
 		this.pointsCloud = [];
         this.color = "blue";
-        this.context;
+		this.convex = [];
+		this.context;
+		
+	}
+	addConvex(){
+		this.convex = mergeHull(sortByX(this.pointsCloud));
 	}
 
 	getPoints(shapes){
@@ -30,11 +35,26 @@ class convexHull{
 					this.pointsCloud.push(ponto);
 				}
 			}else if(shapes[i].constructor.name == "Poligono"){
-				for (const key in shapes[i]) {
-					this.pointsCloud.push(shapes[i].coord[key]);
+				for (let j = 0; j<shapes[i].coord.length; j++) {
+					this.pointsCloud.push(shapes[i].coord[j]);
 				}
 			}
 		}
+	}
+
+	draw(){
+		context.beginPath();
+        
+        context.strokeStyle = this.color;
+        context.moveTo(this.pointsCloud[0].x, this.pointsCloud[0].y);
+        for(let i = 1; i < this.pointsCloud.length; i++){
+            context.lineTo(this.pointsCloud[i].x, this.pointsCloud[i].y);
+        }
+
+        context.lineTo(this.pointsCloud[0].x, this.pointsCloud[0].y);
+        //this.ar = this.area();
+        context.stroke();
+        context.closePath();
 	}
 }
 
@@ -43,7 +63,43 @@ class convexHull{
 
 
 
+var points = [];
+var pointRadius = 8;
+var canvas;
+var widthAdjust = 1.04;
+var heightAdjust = 1.25;
+var numRandomPoints = 100;
+var animationSpeed = 500;
+var lineWeight = 1;
 
+var currWidth;
+var currHeight;
+
+// Global variables necessary in drawing/animation
+var finalHull;
+var triangleLines = [];
+var triangleLinesAnimate = [];
+
+var upperTangentLines = [];
+var lowerTangentLines = [];
+var allLowerTangentLines = [];
+var allUpperTangentLines = [];
+
+var lowerTangentsToDraw = [];
+var upperTangentsToDraw = [];
+
+var topComplete = false;
+var botComplete = false;
+var subHullFound = false;
+var upperTangentTemp;
+var lowerTangentTemp;
+
+var lTIdxDraw = 0;
+var uTIdxDraw = 0;
+
+// Timers used in animation 
+var lowerTangentTimer;
+var upperTangentTimer;
 
 /*
 * CORE CONVEX HULL FUNCTIONS
@@ -357,4 +413,22 @@ function maxXValueIndex(inputPoints){
 		}
 	}
 	return index;
+}
+
+
+class LineObj {
+	constructor (x1,y1, x2,y2){
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
+	}
+
+	getLength(){
+		return Math.sqrt((this.x2-this.x1)^2 + (this.y2-this.y1)^2);
+	}
+
+	getSlope(){
+		return ((this.y2-this.y1) / (this.x2-this.x1));
+	}
 }
