@@ -3,12 +3,28 @@ class convexHull{
 	constructor(){
 		this.pointsCloud = [];
         this.color = "blue";
-		this.convex = [];
+		this.convexMerge = [];
+		this.convexBrute = [];
 		this.context;
 		
 	}
-	addConvex(){
-		this.convex = mergeHull(sortByX(this.pointsCloud));
+	addConvexMerge(){
+		this.convexMerge = mergeHull(sortByX(this.pointsCloud));
+	}
+
+	addConvexBrute(){
+		this.convexBrute = bruteHull(this.pointsCloud);
+		context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
+		for (let i = 0; i < this.convexBrute.length; i++) {
+			this.convexBrute[i].color="orange";
+			context.strokeStyle = this.convexBrute[i].color;
+			context.beginPath();
+			context.moveTo(this.convexBrute[i].ponto1.x, this.convexBrute[i].ponto1.y);
+			context.lineTo(this.convexBrute[i].ponto2.x, this.convexBrute[i].ponto2.y);
+			context.stroke();
+			context.closePath();
+		}
 	}
 
 	getPoints(shapes){
@@ -48,12 +64,12 @@ class convexHull{
 		context.beginPath();
         
         context.strokeStyle = this.color;
-        context.moveTo(this.convex[0].x, this.convex[0].y);
-        for(let i = 1; i < this.convex.length; i++){
-            context.lineTo(this.convex[i].x, this.convex[i].y);
+        context.moveTo(this.convexMerge[0].x, this.convexMerge[0].y);
+        for(let i = 1; i < this.convexMerge.length; i++){
+            context.lineTo(this.convexMerge[i].x, this.convexMerge[i].y);
         }
 
-        context.lineTo(this.convex[0].x, this.convex[0].y);
+        context.lineTo(this.convexMerge[0].x, this.convexMerge[0].y);
         //this.ar = this.area();
         context.stroke();
         context.closePath();
@@ -62,46 +78,14 @@ class convexHull{
 
 
 
-
-
-
-var points = [];
-var pointRadius = 8;
-var canvas;
-var widthAdjust = 1.04;
-var heightAdjust = 1.25;
-var numRandomPoints = 100;
-var animationSpeed = 500;
-var lineWeight = 1;
-
-var currWidth;
-var currHeight;
-
-// Global variables necessary in drawing/animation
-var finalHull;
+// Global variables necessary
 var triangleLines = [];
-var triangleLinesAnimate = [];
 
 var upperTangentLines = [];
 var lowerTangentLines = [];
 var allLowerTangentLines = [];
 var allUpperTangentLines = [];
 
-var lowerTangentsToDraw = [];
-var upperTangentsToDraw = [];
-
-var topComplete = false;
-var botComplete = false;
-var subHullFound = false;
-var upperTangentTemp;
-var lowerTangentTemp;
-
-var lTIdxDraw = 0;
-var uTIdxDraw = 0;
-
-// Timers used in animation 
-var lowerTangentTimer;
-var upperTangentTimer;
 
 /*
 * CORE CONVEX HULL FUNCTIONS
@@ -312,7 +296,7 @@ function bruteForceHull(newPoints) {
 		if(p1.x < p2.x){
 			tempPoints.push(p1);
 			tempPoints.push(p2);
-			lineSegments.push( new LineObj(p1.x, p1.y, p2.x, p2.y));
+			lineSegments.push(new LineObj(p1.x, p1.y, p2.x, p2.y));
 		} else {
 			tempPoints.push(p2);
 			tempPoints.push(p1);
@@ -433,4 +417,35 @@ class LineObj {
 	getSlope(){
 		return ((this.y2-this.y1) / (this.x2-this.x1));
 	}
+}
+
+
+function bruteHull(pointSet){
+	var convex = [];
+	for (let i = 0; i < pointSet.length; i++) {
+		for (let j = 0; j < pointSet.length; j++) {
+			if(i == j){
+				continue;
+			}
+			var flag = true;
+			for (let k = 0; k < pointSet.length; k++) {
+				if (k == i || k==j) {
+					continue;
+				}
+				var d = (pointSet[k].x-pointSet[i].x)*(pointSet[j].y-pointSet[i].y)-(pointSet[k].y-pointSet[i].y)*(pointSet[j].x-pointSet[i].x);
+				if(d > 0){
+					flag = false;
+					break;
+				}
+
+			}
+			if(flag == true){
+				var segment = new Linha(pointSet[i].x, pointSet[i].y);
+				segment.addSegundoPonto(pointSet[j].x, pointSet[j].y);
+				convex.push(segment);
+			}
+			
+		}
+	}
+	return convex;
 }

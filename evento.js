@@ -561,12 +561,18 @@ function onDown(event){
             reDraw();
             break;
 
-        case "ConvexHull" :
-            console.log("chegou");
+        case "MergeHull" :
             convex = new convexHull();
             convex.getPoints(shapes);
-            convex.addConvex();
+            convex.addConvexMerge();
             convex.draw();
+            reDraw();
+            break;
+        
+        case "BruteHull" :
+            convex = new convexHull();
+            convex.getPoints(shapes);
+            convex.addConvexBrute();
             reDraw();
             break;
     }
@@ -659,8 +665,17 @@ document.getElementById('btnEspelhamento').addEventListener('click', function(){
     }
 })
 
-document.getElementById('btnConvexHull').addEventListener('click', function(){
-    btnCurrentAction = "ConvexHull";
+
+document.getElementById('btnMergeHull').addEventListener('click', function(){
+    btnCurrentAction = "MergeHull";
+
+    if(shapes.length > 0){
+        restoreDraw();
+    }
+})
+
+document.getElementById('btnBruteHull').addEventListener('click', function(){
+    btnCurrentAction = "BruteHull";
 
     if(shapes.length > 0){
         restoreDraw();
