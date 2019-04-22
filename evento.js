@@ -80,6 +80,10 @@ function onmousemove(event) {
             if(numberOfClicks > 1){
                 shapeSelected.drawPreviewRotation(mouse_x, mouse_y);
             }
+        }else if(btnCurrentAction == "Espelhamento"){
+            if(numberOfClicks > 1){
+                shapeSelected.drawPreviewMirror(mouse_x, mouse_y);
+            }
         }else{
             shape.drawPreview(mouse_x, mouse_y);
         }
@@ -404,8 +408,8 @@ function onDown(event){
             
             if(numberOfClicks > 1){
                 numberOfClicks = 0;
-                shapeSelected.rotation(cx,cy);
-                shapeSelected.restore();
+                //shapeSelected.rotation(cx,cy);
+                //shapeSelected.restore();
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 reDraw();
 
@@ -413,7 +417,7 @@ function onDown(event){
                 
             }else{
                 if(numberOfClicks==1){
-                    shapeSelected.addEixo(cx, cy);
+                    shapeSelected.addMirror(cx, cy);
                     numberOfClicks++;
                 }else{
                     for (let i = 0; i < shapes.length; i++) {
@@ -476,16 +480,16 @@ function onDown(event){
             
             if(numberOfClicks > 1){
                 numberOfClicks = 0;
-                shapeSelected.mirror(cx,cy);
-                shapeSelected.restore();
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                reDraw();
+                //shapeSelected.mirror(cx,cy);
+                //shapeSelected.restore();
+                //context.clearRect(0, 0, canvas.width, canvas.height);
+                //reDraw();
 
                 break;
                 
             }else{
                 if(numberOfClicks==1){
-                    shapeSelected.addEixo(cx, cy);
+                    shapeSelected.addMirror(cx, cy);
                     numberOfClicks++;
                 }else{
                     for (let i = 0; i < shapes.length; i++) {
