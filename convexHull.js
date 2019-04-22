@@ -355,7 +355,7 @@ function bruteForceHull(newPoints) {
 * Return: A sorted (by x coord) array of point objects
 */
 function sortByX(pointSet) {
-	return points.sort(function(a,b){
+	return pointSet.sort(function(a,b){
 		return a.x - b.x;
 	});
 }
