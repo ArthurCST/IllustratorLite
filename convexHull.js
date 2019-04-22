@@ -19,8 +19,8 @@ class convexHull{
 				this.pointsCloud.push(shapes[i].ponto1);
 				this.pointsCloud.push(shapes[i].ponto2);		
 			}else if(shapes[i].constructor.name == "Curva"){
-				for (const key in shapes[i]) {
-					this.pointsCloud.push(shapes[i].pontos[key]);
+				for (let j = 0; j<shapes[i].pontos.length; j++) {
+					this.pointsCloud.push(shapes[i].pontos[j]);
 				}
 			}else if(shapes[i].constructor.name == "Circulo"){
 				// x(t) = r cos(t) + j
@@ -43,15 +43,17 @@ class convexHull{
 	}
 
 	draw(){
+		context.clearRect(0, 0, canvas.width, canvas.height);
+        reDraw();
 		context.beginPath();
         
         context.strokeStyle = this.color;
-        context.moveTo(this.pointsCloud[0].x, this.pointsCloud[0].y);
-        for(let i = 1; i < this.pointsCloud.length; i++){
-            context.lineTo(this.pointsCloud[i].x, this.pointsCloud[i].y);
+        context.moveTo(this.convex[0].x, this.convex[0].y);
+        for(let i = 1; i < this.convex.length; i++){
+            context.lineTo(this.convex[i].x, this.convex[i].y);
         }
 
-        context.lineTo(this.pointsCloud[0].x, this.pointsCloud[0].y);
+        context.lineTo(this.convex[0].x, this.convex[0].y);
         //this.ar = this.area();
         context.stroke();
         context.closePath();

@@ -565,6 +565,7 @@ function onDown(event){
             console.log("chegou");
             convex = new convexHull();
             convex.getPoints(shapes);
+            convex.addConvex();
             convex.draw();
             reDraw();
             break;
