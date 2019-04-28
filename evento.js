@@ -480,17 +480,17 @@ function onDown(event){
             
             if(numberOfClicks > 1){
                 numberOfClicks = 0;
-                //shapeSelected.mirror(cx,cy);
-                //shapeSelected.restore();
-                //context.clearRect(0, 0, canvas.width, canvas.height);
-                //reDraw();
-
+                shapeSelected.reflection(cx,cy);
+                shapeSelected.restore();
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                reDraw();
                 break;
                 
             }else{
                 if(numberOfClicks==1){
                     shapeSelected.addMirror(cx, cy);
                     numberOfClicks++;
+                    reDraw();
                 }else{
                     for (let i = 0; i < shapes.length; i++) {
                         /*Ponto*/
@@ -501,9 +501,8 @@ function onDown(event){
                                 }
                                 shapeSelected = shapes[i];
                                 shapeSelected.selected();
-                                if(numberOfClicks == 0){
-                                    numberOfClicks++;  
-                                }
+                                numberOfClicks++;  
+                                
                             }
                             
                             previousX = cx;
