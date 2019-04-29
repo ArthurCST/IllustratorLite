@@ -85,13 +85,14 @@ class Ponto{
 
         var invTranslationMatrix = [[1, 0, -this.x],[0, 1, -this.y],[0, 0, 1]];
         var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var invrotationMatrix = [[Math.cos(teta), Math.sin(teta), 0],[-Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
         var mirrorMatrix = [[-1, 0, 0],[0, 1, 0],[0, 0, 1]];
         var translationMatrix = [[1, 0, this.x],[0, 1, this.y],[0, 0, 1]];
 
         var newPosition;
         var currentPosition;
         currentPosition = [[this.x], [this.y], [1]];
-        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition))));
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invrotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         
