@@ -75,24 +75,26 @@ class Ponto{
         espelho.addSegundoPonto(x, y);
  
         var vetorBase = new Linha(0, 0);
-        vetorBase.addSegundoPonto(0, canvas.height);
+        vetorBase.addSegundoPonto(canvas.width, 0);
 
         var norma1 = Norma(espelho);
         var norma2 = Norma(vetorBase);
         var produtoInterno = ProdutoInterno(espelho, vetorBase);
-        arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
         var teta = arccos*180/Math.PI; 
-
+        console.log(teta)
         var invTranslationMatrix = [[1, 0, -this.x],[0, 1, -this.y],[0, 0, 1]];
-        var rotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
-        var invrotationMatrix = [[Math.cos(teta), Math.sin(teta), 0],[-Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
-        var mirrorMatrix = [[-1, 0, 0],[0, 1, 0],[0, 0, 1]];
+
+        var rotationMatrix = [[Math.cos(-teta), -Math.sin(-teta), 0],[Math.sin(-teta), Math.cos(-teta), 0],[0, 0, 1]];
+        var invRotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+
         var translationMatrix = [[1, 0, this.x],[0, 1, this.y],[0, 0, 1]];
 
         var newPosition;
         var currentPosition;
         currentPosition = [[this.x], [this.y], [1]];
-        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invrotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         
@@ -100,9 +102,37 @@ class Ponto{
         context.fillStyle = "green";
         context.fillRect(newPosition[0][0], newPosition[1][0], 3, 3);
 
+        espelho.color = "green";
+        espelho.draw();
         reDraw();
     }
 
+    reflection(x, y){
+        this.mirror.addSegundoPonto(x, y);
+        var vetorBase = new Linha(0, 0);
+        vetorBase.addSegundoPonto(canvas.width, 0);
+
+        var norma1 = Norma(this.mirror);
+        var norma2 = Norma(vetorBase);
+        var produtoInterno = ProdutoInterno(this.mirror, vetorBase);
+        var arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
+        var teta = arccos*180/Math.PI; 
+        console.log(teta);
+
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -this.y],[0, 0, 1]];
+        var rotationMatrix = [[Math.cos(-teta), -Math.sin(-teta), 0],[Math.sin(-teta), Math.cos(-teta), 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+        var invRotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, this.y],[0, 0, 1]];
+
+        var newPosition;
+        var currentPosition;
+        currentPosition = [[this.x], [this.y], [1]];
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+        this.x = newPosition[0][0];
+        this.y = newPosition[1][0];
+        this.mirror = null;
+    }
    
 
 }
