@@ -6,7 +6,11 @@ class Poligono {
         this.color = "black";
         this.eixo;
         this.context;
+        this.mirror;
         
+    }
+    addMirror(x, y){
+        this.mirror = new Linha(x, y);
     }
 
     getTotalCoords(){
@@ -169,13 +173,13 @@ class Poligono {
         this.coord[0].x = cx;
         this.coord[0].y = cy;
 
-        var newPositon;
+        var newPosition;
         for (let i = 1; i < this.coord.length; i++) {
             var currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
             var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
-            newPositon = multiplyMatrix(translationMatrix, currentPosition);
-            this.coord[i].x = newPositon[0][0];
-            this.coord[i].y = newPositon[1][0];
+            newPosition = multiplyMatrix(translationMatrix, currentPosition);
+            this.coord[i].x = newPosition[0][0];
+            this.coord[i].y = newPosition[1][0];
         }
     }
 
@@ -190,12 +194,12 @@ class Poligono {
         context.strokeStyle = "green";
         context.moveTo(cx, cy);
 
-        var newPositon;
+        var newPosition;
         for (let i = 1; i < this.coord.length; i++) {
             var currentPosition = [[Math.abs(this.coord[i].x)], [Math.abs(this.coord[i].y)], [1]];
             var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
-            newPositon = multiplyMatrix(translationMatrix, currentPosition);
-            context.lineTo(newPositon[0][0], newPositon[1][0]);
+            newPosition = multiplyMatrix(translationMatrix, currentPosition);
+            context.lineTo(newPosition[0][0], newPosition[1][0]);
         }
         context.lineTo(cx, cy);
         context.stroke();
@@ -208,7 +212,7 @@ class Poligono {
         var x = Math.abs(cx - this.coord[0].x);
         var y = Math.abs(cy - this.coord[0].y);
         var center = this.getCenter();
-        var newPositon;
+        var newPosition;
 
         var currentPosition;
         var scaleMatrix = [[x/100, 0, 0],[0, y/100, 0],[0, 0, 1]];
@@ -217,9 +221,9 @@ class Poligono {
 
         for (let i = 0; i < this.coord.length; i++) {
             currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
-            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
-            this.coord[i].x = newPositon[0][0];
-            this.coord[i].y = newPositon[1][0];
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            this.coord[i].x = newPosition[0][0];
+            this.coord[i].y = newPosition[1][0];
         }
 
     }
@@ -229,26 +233,26 @@ class Poligono {
         var x = Math.abs(cx - this.coord[0].x);
         var y = Math.abs(cy - this.coord[0].y);
         var center = this.getCenter();
-        var newPositon;
+        var newPosition;
 
         var currentPosition = [[this.coord[0].x], [this.coord[0].y], [1]];
         var scaleMatrix = [[x/100, 0, 0],[0, y/100, 0],[0, 0, 1]];
         var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
         var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
-        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         reDraw();
-        var b1 = newPositon[0][0];
-        var b2 = newPositon[1][0];
+        var b1 = newPosition[0][0];
+        var b2 = newPosition[1][0];
         context.beginPath();
         context.strokeStyle = "green";
         context.moveTo(b1, b2);
         
         for (let i = 1; i < this.coord.length; i++) {
             currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
-            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
-            context.lineTo(newPositon[0][0], newPositon[1][0]);
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(scaleMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            context.lineTo(newPosition[0][0], newPosition[1][0]);
         }
         context.lineTo(b1, b2);
         context.stroke();
@@ -304,14 +308,14 @@ class Poligono {
         var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
         var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
         
-        var newPositon;
+        var newPosition;
         var currentPosition;
         
         for (let i = 0; i < this.coord.length; i++) {
             currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
-            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
-            this.coord[i].x = newPositon[0][0];
-            this.coord[i].y = newPositon[1][0];
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            this.coord[i].x = newPosition[0][0];
+            this.coord[i].y = newPosition[1][0];
         }
         
     }
@@ -337,12 +341,12 @@ class Poligono {
         var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
         var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
         
-        var newPositon;
+        var newPosition;
         var currentPosition = [[this.coord[0].x], [this.coord[0].y], [1]];
         
-        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
-        var b1 = newPositon[0][0];
-        var b2 = newPositon[1][0];
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+        var b1 = newPosition[0][0];
+        var b2 = newPosition[1][0];
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         reDraw();
@@ -355,11 +359,85 @@ class Poligono {
         
         for (let i = 1; i < this.coord.length; i++) {
             currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
-            newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
-            context.lineTo(newPositon[0][0], newPositon[1][0]);
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+            context.lineTo(newPosition[0][0], newPosition[1][0]);
         }
         context.lineTo(b1, b2);
         context.stroke();
 
+    }
+
+    drawPreviewMirror(x, y){
+
+        var espelho = this.mirror;
+        
+        espelho.addSegundoPonto(x, y);
+
+        var norma1 = Norma(espelho);
+
+        var senTeta = (espelho.ponto2.y-espelho.ponto1.y)/norma1;
+        var cosTeta = (espelho.ponto2.x-espelho.ponto1.x)/norma1;
+
+        var y = espelho.ponto2.y-(((espelho.ponto2.y - espelho.ponto1.y)* espelho.ponto2.x)/(espelho.ponto2.x-espelho.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
+ 
+
+        var newPosition;
+        var currentPosition;
+
+        currentPosition = [[this.coord[0].x], [this.coord[0].y], [1]];
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+
+        var b1 = newPosition[0][0];
+        var b2 = newPosition[1][0];
+        context.beginPath();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = "green";
+        context.moveTo(b1, b2);
+        for (let i = 1; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+            context.lineTo(newPosition[0][0], newPosition[1][0]);
+        }
+        context.lineTo(b1, b2);
+        context.stroke();
+
+        espelho.color = "blue";
+        espelho.draw();
+        reDraw();
+    }
+
+    reflection(x, y){
+        this.mirror.addSegundoPonto(x, y);
+
+        var norma1 = Norma(this.mirror);
+
+        var senTeta = (this.mirror.ponto2.y-this.mirror.ponto1.y)/norma1;
+        var cosTeta = (this.mirror.ponto2.x-this.mirror.ponto1.x)/norma1;
+
+
+        var y = this.mirror.ponto2.y-(((this.mirror.ponto2.y - this.mirror.ponto1.y)* this.mirror.ponto2.x)/(this.mirror.ponto2.x-this.mirror.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
+
+        var newPosition;
+        var currentPosition;
+
+        for (let i = 0; i < this.coord.length; i++) {
+            currentPosition = [[this.coord[i].x], [this.coord[i].y], [1]];
+            newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+            this.coord[i].x = newPosition[0][0];
+            this.coord[i].y = newPosition[1][0];
+        }
+        this.mirror = null;
     }
 }

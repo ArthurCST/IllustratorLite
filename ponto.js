@@ -73,23 +73,21 @@ class Ponto{
         context.closePath();
         
         espelho.addSegundoPonto(x, y);
- 
-        var vetorBase = new Linha(0, 0);
-        vetorBase.addSegundoPonto(canvas.width, 0);
 
         var norma1 = Norma(espelho);
-        var norma2 = Norma(vetorBase);
-        var produtoInterno = ProdutoInterno(espelho, vetorBase);
-        var arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
-        var teta = arccos*180/Math.PI; 
-        console.log(teta)
-        var invTranslationMatrix = [[1, 0, -this.x],[0, 1, -this.y],[0, 0, 1]];
 
-        var rotationMatrix = [[Math.cos(-teta), -Math.sin(-teta), 0],[Math.sin(-teta), Math.cos(-teta), 0],[0, 0, 1]];
-        var invRotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
+        var senTeta = (espelho.ponto2.y-espelho.ponto1.y)/norma1;
+        var cosTeta = (espelho.ponto2.x-espelho.ponto1.x)/norma1;
+
+
+        var y = espelho.ponto2.y-(((espelho.ponto2.y - espelho.ponto1.y)* espelho.ponto2.x)/(espelho.ponto2.x-espelho.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
         var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
-
-        var translationMatrix = [[1, 0, this.x],[0, 1, this.y],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
+ 
 
         var newPosition;
         var currentPosition;
@@ -102,7 +100,7 @@ class Ponto{
         context.fillStyle = "green";
         context.fillRect(newPosition[0][0], newPosition[1][0], 3, 3);
 
-        espelho.color = "green";
+        espelho.color = "blue";
         espelho.draw();
         reDraw();
     }
@@ -113,17 +111,18 @@ class Ponto{
         vetorBase.addSegundoPonto(canvas.width, 0);
 
         var norma1 = Norma(this.mirror);
-        var norma2 = Norma(vetorBase);
-        var produtoInterno = ProdutoInterno(this.mirror, vetorBase);
-        var arccos = Math.acos(((produtoInterno) / (norma1 * norma2)));
-        var teta = arccos*180/Math.PI; 
-        console.log(teta);
 
-        var invTranslationMatrix = [[1, 0, 0],[0, 1, -this.y],[0, 0, 1]];
-        var rotationMatrix = [[Math.cos(-teta), -Math.sin(-teta), 0],[Math.sin(-teta), Math.cos(-teta), 0],[0, 0, 1]];
+        var senTeta = (this.mirror.ponto2.y-this.mirror.ponto1.y)/norma1;
+        var cosTeta = (this.mirror.ponto2.x-this.mirror.ponto1.x)/norma1;
+
+
+        var y = this.mirror.ponto2.y-(((this.mirror.ponto2.y - this.mirror.ponto1.y)* this.mirror.ponto2.x)/(this.mirror.ponto2.x-this.mirror.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
         var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
-        var invRotationMatrix = [[Math.cos(teta), -Math.sin(teta), 0],[Math.sin(teta), Math.cos(teta), 0],[0, 0, 1]];
-        var translationMatrix = [[1, 0, 0],[0, 1, this.y],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
 
         var newPosition;
         var currentPosition;

@@ -5,6 +5,10 @@ class Circulo{
         this.r = 0;
         this.eixo;
         this.color = "black";
+        this.mirror;
+    }
+    addMirror(x, y){
+        this.mirror = new Linha(x, y);
     }
 
     addSegundoPonto(cx, cy){
@@ -63,21 +67,21 @@ class Circulo{
         var x = cx - this.ponto1.x;
         var y = cy - this.ponto1.y;
 
-        var newPositon2;
+        var newPosition2;
         var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
         var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
        
-        newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
+        newPosition2 = multiplyMatrix(translationMatrix, currentPosition2);
 
-        var dx = cx - newPositon2[0][0];
-        var dy = cy - newPositon2[1][0];
+        var dx = cx - newPosition2[0][0];
+        var dy = cy - newPosition2[1][0];
         var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
 
         this.ponto1.x = cx;
         this.ponto1.y = cy;
 
-        this.ponto2.x = newPositon2[0][0];
-        this.ponto2.y = newPositon2[1][0];
+        this.ponto2.x = newPosition2[0][0];
+        this.ponto2.y = newPosition2[1][0];
 
         this.r = dist;
 
@@ -88,14 +92,14 @@ class Circulo{
         var x = cx - this.ponto1.x;
         var y = cy - this.ponto1.y;
 
-        var newPositon2;
+        var newPosition2;
         var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
         var translationMatrix = [[1, 0, x],[0, 1, y],[0, 0, 1]];
        
-        newPositon2 = multiplyMatrix(translationMatrix, currentPosition2);
+        newPosition2 = multiplyMatrix(translationMatrix, currentPosition2);
 
-        var dx = cx - newPositon2[0][0];
-        var dy = cy - newPositon2[1][0];
+        var dx = cx - newPosition2[0][0];
+        var dy = cy - newPosition2[1][0];
         var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
         
 
@@ -157,19 +161,19 @@ class Circulo{
         var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
         var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
         
-        var newPositon;
+        var newPosition;
         var currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
-        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
 
-        var newPositon2;
+        var newPosition2;
         var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
-        newPositon2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
+        newPosition2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
 
-        this.ponto1.x = newPositon[0][0];;
-        this.ponto1.y = newPositon[1][0];;
+        this.ponto1.x = newPosition[0][0];;
+        this.ponto1.y = newPosition[1][0];;
 
-        this.ponto2.x = newPositon2[0][0];
-        this.ponto2.y = newPositon2[1][0];
+        this.ponto2.x = newPosition2[0][0];
+        this.ponto2.y = newPosition2[1][0];
 
         var dx = this.ponto1.x - this.ponto2.x;
         var dy = this.ponto1.y - this.ponto2.y;
@@ -199,20 +203,19 @@ class Circulo{
         var translationMatrix = [[1, 0, center.x],[0, 1, center.y],[0, 0, 1]];
         var invTranslationMatrix = [[1, 0, -center.x],[0, 1, -center.y],[0, 0, 1]];
         
-        var newPositon;
+        var newPosition;
         var currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
-        newPositon = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)));
 
-        var newPositon2;
+        var newPosition2;
         var currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
-        newPositon2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
+        newPosition2 = multiplyMatrix(translationMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)));
 
-        var dx = newPositon[0][0] - newPositon2[0][0];
-        var dy = newPositon[1][0] - newPositon2[1][0];
+        var dx = newPosition[0][0] - newPosition2[0][0];
+        var dy = newPosition[1][0] - newPosition2[1][0];
         var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
 
         context.clearRect(0, 0, canvas.width, canvas.height);
-        reDraw();
 
         context.strokeStyle = "green";
 
@@ -220,9 +223,99 @@ class Circulo{
 
         context.beginPath();
         
-        context.arc(newPositon[0][0], newPositon[1][0], dist, 0, Math.PI*2);
+        context.arc(newPosition[0][0], newPosition[1][0], dist, 0, Math.PI*2);
         context.stroke();
 
+    }
+
+    drawPreviewMirror(x, y){
+
+        var espelho = this.mirror;
+        
+        espelho.addSegundoPonto(x, y);
+
+        var norma1 = Norma(espelho);
+
+        var senTeta = (espelho.ponto2.y-espelho.ponto1.y)/norma1;
+        var cosTeta = (espelho.ponto2.x-espelho.ponto1.x)/norma1;
+
+        var y = espelho.ponto2.y-(((espelho.ponto2.y - espelho.ponto1.y)* espelho.ponto2.x)/(espelho.ponto2.x-espelho.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
+ 
+
+        var newPosition;
+        var newPosition2;
+        var currentPosition;
+        var currentPosition2;
+
+        currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+
+        currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        newPosition2 = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)))));
+
+        var dx = newPosition[0][0] - newPosition2[0][0];
+        var dy = newPosition[1][0] - newPosition2[1][0];
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.strokeStyle = "green";
+
+        context.beginPath();
+        
+        context.arc(newPosition[0][0], newPosition[1][0], dist, 0, Math.PI*2);
+        context.stroke();
+
+        espelho.color = "blue";
+        espelho.draw();
+        reDraw();
+    }
+
+    reflection(x, y){
+        this.mirror.addSegundoPonto(x, y);
+
+        var norma1 = Norma(this.mirror);
+
+        var senTeta = (this.mirror.ponto2.y-this.mirror.ponto1.y)/norma1;
+        var cosTeta = (this.mirror.ponto2.x-this.mirror.ponto1.x)/norma1;
+
+
+        var y = this.mirror.ponto2.y-(((this.mirror.ponto2.y - this.mirror.ponto1.y)* this.mirror.ponto2.x)/(this.mirror.ponto2.x-this.mirror.ponto1.x));
+        
+        var invTranslationMatrix = [[1, 0, 0],[0, 1, -y],[0, 0, 1]];
+        var rotationMatrix = [[cosTeta, senTeta, 0],[-senTeta, cosTeta, 0],[0, 0, 1]];
+        var mirrorMatrix = [[1, 0, 0],[0, -1, 0],[0, 0, 1]];
+        var invRotationMatrix = [[cosTeta, -senTeta, 0],[senTeta, cosTeta, 0],[0, 0, 1]];
+        var translationMatrix = [[1, 0, 0],[0, 1, y],[0, 0, 1]];
+
+        var newPosition;
+        var newPosition2;
+        var currentPosition;
+        var currentPosition2;
+
+        currentPosition = [[this.ponto1.x], [this.ponto1.y], [1]];
+        newPosition = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition)))));
+
+        currentPosition2 = [[this.ponto2.x], [this.ponto2.y], [1]];
+        newPosition2 = multiplyMatrix(translationMatrix, multiplyMatrix(invRotationMatrix, multiplyMatrix(mirrorMatrix, multiplyMatrix(rotationMatrix, multiplyMatrix(invTranslationMatrix, currentPosition2)))));
+        
+        var dx = newPosition[0][0] - newPosition2[0][0];
+        var dy = newPosition[1][0] - newPosition2[1][0];
+        var dist = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        
+        this.ponto1.x = newPosition[0][0];
+        this.ponto1.y = newPosition[1][0];
+        this.ponto2.x = newPosition2[0][0];
+        this.ponto2.y = newPosition2[1][0];
+        this.r = dist;
+        
+        this.mirror = null;
     }
 
 }
